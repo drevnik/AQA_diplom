@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "4.1.3"
+    id 'io.qameta.allure' version '2.8.1'
+}
+
+group 'ru.netology'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+allure {
+    autoconfigure = true
+    version='2.13.0'
+    useJUnit5 { version='2.13.0'}
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
+    testImplementation 'mysql:mysql-connector-java:8.0.18'
+    testImplementation 'com.codeborne:selenide:5.3.1'
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation 'commons-dbutils:commons-dbutils:1.7'
+    testImplementation 'org.postgresql:postgresql:42.2.0'
+    testImplementation 'io.qameta.allure:allure-selenide:2.13.0'
+
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'db.url', System.getProperty('db.url', 'jdbc:mysql://localhost:3306/app')
+    systemProperty 'db.login', System.getProperty('db.login', 'app')
+    systemProperty 'db.password', System.getProperty('db.password', 'pass')
+    systemProperty 'sut.url', System.getProperty('sut.url', 'localhost:8080')
+    }
