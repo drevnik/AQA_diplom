@@ -31,7 +31,7 @@ java -jar artifacts/aqa-shop.jar -P:jdbc.url=jdbc:postgresql://192.168.99.100:33
 
 gradlew test -Dtest.db.url=jdbc:postgresql://192.168.99.100:5432/app
 
-4. После прогона тестов остановить контейнеры
+4. Остановить контейнеры
 
  docker-compose down
 
