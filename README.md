@@ -3,7 +3,7 @@
 * SUT, gate-simulator находятся в папке [/artifacts](https://github.com/falkona/qa-diploma/tree/master/artifacts)
 
 
-###Как запускать
+### Как запустить
 
 #### MySQL:
 1. Запустить контейнеры: MySQL, Node.js
