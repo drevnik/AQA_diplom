@@ -21,6 +21,9 @@ public class PurchaseTests {
     private Card declinedCard = new Card();
     private Card invalidNumberCard = new Card();
 
+    String statusApproved = "APPROVED";
+    String statusDeclined = "DECLINED";
+
     @BeforeEach
     void setUp() {
         setDeclinedCard();
@@ -46,7 +49,7 @@ public class PurchaseTests {
     @DisplayName("Must confirm the purchase with valid data and a card with the status APPROVED")
     void shouldConfirmPaymentWithValidDataapprovedCard() throws SQLException {
         getFilledPaymentPage(approvedCard).assertNotificationOkIsVisible();
-        assertEquals(SQLHelper.findPaymentStatus(), "APPROVED");
+        assertEquals(SQLHelper.findPaymentStatus(), "statusApproved");
         assertNotNull(SQLHelper.findPaymentId());
     }
 
@@ -54,7 +57,7 @@ public class PurchaseTests {
     @DisplayName("Must confirm a loan with valid data and a card with the status APPROVED")
     void shouldConfirmCreditWithValidDataapprovedCard() throws SQLException {
         getFilledCreditPage(approvedCard).assertNotificationOkIsVisible();
-        assertEquals(SQLHelper.findCreditStatus(), "APPROVED");
+        assertEquals(SQLHelper.findCreditStatus(), "statusDeclined");
         assertNotNull(SQLHelper.findCreditId());
     }
 
@@ -62,7 +65,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm the purchase when using a card with the DECLINED status")
     void shouldNotConfirmPaymentWithInvaliddeclinedCard() throws SQLException {
         getFilledPaymentPage(declinedCard).assertNotificationErrorIsVisible();
-        assertEquals(SQLHelper.findPaymentStatus(), "DECLINED");
+        assertEquals(SQLHelper.findPaymentStatus(), "statusDeclined");
         assertNull(SQLHelper.findPaymentId());
     }
 
@@ -70,7 +73,7 @@ public class PurchaseTests {
     @DisplayName("Must not confirm credit when using a card with the DECLINED status")
     void shouldNotConfirmCreditWithInvaliddeclinedCard() throws SQLException {
         getFilledCreditPage(declinedCard).notificationErrorIsVisible();
-        assertEquals(SQLHelper.findCreditStatus(), "DECLINED");
+        assertEquals(SQLHelper.findCreditStatus(), "statusDeclined");
         assertNull(SQLHelper.findCreditId());
     }
 

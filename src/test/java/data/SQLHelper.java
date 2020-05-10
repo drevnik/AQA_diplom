@@ -1,5 +1,9 @@
 package data;
+
 import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class SQLHelper {
 
@@ -12,31 +16,31 @@ public class SQLHelper {
         return DriverManager.getConnection(url, user, password);
     }
 
-    public static String findPaymentStatus() throws SQLException{
+    public static String findPaymentStatus() throws SQLException {
         String stmt = "select status from payment_entity order by created desc limit 1;";
-        String columnName= "status";
+        String columnName = "status";
         return getData(stmt, columnName);
     }
 
-    public static String findCreditStatus() throws SQLException{
+    public static String findCreditStatus() throws SQLException {
         String stmt = "select status from credit_request_entity order by created desc limit 1;";
         String columnName = "status";
         return getData(stmt, columnName);
     }
 
-    public static String findPaymentId() throws SQLException{
+    public static String findPaymentId() throws SQLException {
         String stmt = "select payment_id from order_entity order by created desc limit 1;";
         String columnName = "payment_id";
         return getData(stmt, columnName);
     }
 
-    public static String findCreditId() throws SQLException{
+    public static String findCreditId() throws SQLException {
         String stmt = "select credit_id from order_entity order by created desc limit 1;";
         String columnName = "credit_id";
         return getData(stmt, columnName);
     }
 
-    public static boolean isNotEmpty() throws SQLException{
+    public static boolean isNotEmpty() throws SQLException {
         String stmt = "select * from order_entity;";
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(stmt);
