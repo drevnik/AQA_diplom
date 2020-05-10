@@ -1,7 +1,10 @@
 # Дипломный проект
 
-### Как запустить
+* Файлы docker-compose находится в корневом каталоге
+* SUT, gate-simulator находятся в папке /artifacts
+* В файле application.properties указан хост 192.168.99.100. Для работы с Windows 10 Pro необходимо заменить хост на localhost
 
+### Как запустить
 #### MySQL:
 1. Запустить контейнеры: MySQL, Node.js
 
@@ -21,7 +24,7 @@ docker-compose down
 #### Для работы с Postgres
 1. Запустить контейнеры: Postgres, Node.js
 
-docker-compose -f docker-compose-ps.yml up -d  
+docker-compose up
 
 2. Запустить SUT
 
@@ -33,6 +36,4 @@ gradlew test -Dtest.db.url=jdbc:postgresql://192.168.99.100:5432/app
 
 4. Остановить контейнеры
 
- docker-compose down
-
-  
+docker-compose down
