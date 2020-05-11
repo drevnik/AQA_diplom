@@ -11,7 +11,6 @@ public class SQLHelper {
     private static final String user = "app";
     private static final String password = "pass";
 
-
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
@@ -79,5 +78,4 @@ public class SQLHelper {
             e.getErrorCode();
         }
     }
-
 }

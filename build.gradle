@@ -14,9 +14,9 @@ compileTestJava.options.encoding = "UTF-8"
 
 allure {
     autoconfigure = true
-    version = '2.13.2'
+    version = '2.13.1' // Latest Allure Version
     useJUnit5 {
-        version = '2.13.2'
+        version = '2.13.1' // Latest Allure Version
     }
 }
 
@@ -28,19 +28,15 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.5.1'
     testImplementation 'com.codeborne:selenide:5.3.1'
-    testImplementation 'io.qameta.allure:allure-selenide:2.13.2'
+    testImplementation 'io.qameta.allure:allure-selenide:2.13.0'
     testImplementation 'mysql:mysql-connector-java:8.0.18'
-    testImplementation 'org.postgresql:postgresql:42.2.0'
-    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation 'postgresql:postgresql:9.0-801.jdbc4'
+    implementation 'com.github.javafaker:javafaker:1.0.1'
     testImplementation 'commons-dbutils:commons-dbutils:1.7'
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
 }
 
 test {
     useJUnitPlatform()
     systemProperty 'selenide.headless', System.getProperty('selenide.headless')
-    systemProperty 'test.db.url', System.getProperty('test.db.url')
+    systemProperty 'db.url', System.getProperty('db.url')
 }

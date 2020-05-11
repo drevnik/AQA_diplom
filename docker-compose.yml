@@ -6,17 +6,19 @@ services:
     container_name: node
     ports:
       - '9999:9999'
+
   postgres:
-    image: postgres:12-alpine
+    image: postgres:12.0-alpine
     container_name: postgres
     ports:
       - '5432:5432'
     volumes:
-      - ./pgdata:/var/lib/postgresql/pgdata
+      - ./pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=app
       - POSTGRES_DB=app
+      - PGDATA=/tmp
 
   mysql:
     image: mysql:8.0.18
@@ -30,4 +32,3 @@ services:
       - MYSQL_DATABASE=app
       - MYSQL_USER=app
       - MYSQL_PASSWORD=pass
-

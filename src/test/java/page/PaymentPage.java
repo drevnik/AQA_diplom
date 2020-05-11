@@ -17,7 +17,7 @@ public class PaymentPage {
     private SelenideElement ownerField = $(byText("Владелец")).parent().$(byCssSelector(".input__control"));
     private SelenideElement cvcField = $(byText("CVC/CVV")).parent().$(byCssSelector(".input__control"));
     private SelenideElement continueButton = $(byText("Продолжить")).parent().parent();
-    private SelenideElement notificationOK = $(byCssSelector(".notification_status_ok"));
+    private SelenideElement notificationOK =  $(byCssSelector(".notification_status_ok"));
     private SelenideElement notificationError = $(byCssSelector(".notification_status_error"));
     private SelenideElement inputInvalid = $(".input__sub");
 
@@ -66,7 +66,6 @@ public class PaymentPage {
         cvcField.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
     }
 
-    // Ошибки при вводе невалидных данных:
 
     public void assertInputInvalidFormat() {
         inputInvalid.shouldHave(Condition.exactText("Неверный формат"));
