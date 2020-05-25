@@ -23,17 +23,37 @@ public class PurchaseTests {
     private static final String STATUS_APPROVED = "APPROVED";
     private static final String STATUS_DECLINED = "DECLINED";
 
-    @BeforeEach
-    void setUp() {
-        setDeclinedCard();
-        setApprovedCard();
+    private void setApprovedCard() {
+        approvedCard = new Card();
+
+        approvedCard.setNumber("4444 4444 4444 4441");
+        approvedCard.setMonth("05");
+        approvedCard.setYear(getCorrectYear());
+        approvedCard.setOwner(setFakeOwner());
+        approvedCard.setCvc(getRandomCvc());
+    }
+
+    private void setDeclinedCard() {
+        declinedCard = new Card();
+
+        declinedCard.setNumber("4444 4444 4444 4442");
+        declinedCard.setMonth("05");
+        declinedCard.setYear(getCorrectYear());
+        declinedCard.setOwner(setFakeOwner());
+        declinedCard.setCvc(getRandomCvc());
+    }
+
+    private void setInvalidNumberCard() {
+        invalidNumberCard = new Card();
+
+        invalidNumberCard.setNumber("4444 4444 4444 4444");
     }
 
     @BeforeEach
-    public void newCard() {
-        approvedCard = new Card();
-        declinedCard = new Card();
-        invalidNumberCard = new Card();
+    void setUp() {
+        setApprovedCard();
+        setDeclinedCard();
+        setInvalidNumberCard();
     }
 
     @AfterEach
@@ -53,32 +73,32 @@ public class PurchaseTests {
 
     @Test
     @DisplayName("Must confirm the purchase with valid data and a card with the status APPROVED")
-    void shouldConfirmPaymentWithValidDataapprovedCard() throws SQLException {
-        getFilledPaymentPage(approvedCard).creditCardForm.assertNotificationOkIsVisible();
+    void shouldConfirmPaymentWithValidDataApprovedCard() throws SQLException {
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertNotificationOkIsVisible();
         assertEquals(SQLHelper.findPaymentStatus(), STATUS_APPROVED);
         assertNotNull(SQLHelper.findPaymentId());
     }
 
     @Test
     @DisplayName("Must confirm a loan with valid data and a card with the status APPROVED")
-    void shouldConfirmCreditWithValidDataapprovedCard() throws SQLException {
-        getFilledCreditPage(approvedCard).creditCardForm.assertNotificationOkIsVisible();
+    void shouldConfirmCreditWithValidDataApprovedCard() throws SQLException {
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertNotificationOkIsVisible();
         assertEquals(SQLHelper.findCreditStatus(), STATUS_DECLINED);
         assertNotNull(SQLHelper.findCreditId());
     }
 
     @Test
     @DisplayName("Should not confirm the purchase when using a card with the DECLINED status")
-    void shouldNotConfirmPaymentWithInvaliddeclinedCard() throws SQLException {
-        getFilledPaymentPage(declinedCard).creditCardForm.assertNotificationErrorIsVisible();
+    void shouldNotConfirmPaymentWithInvalidDeclinedCard() throws SQLException {
+        getFilledPaymentPage(declinedCard).getCreditCardForm().assertNotificationErrorIsVisible();
         assertEquals(SQLHelper.findPaymentStatus(), STATUS_DECLINED);
         assertNull(SQLHelper.findPaymentId());
     }
 
     @Test
     @DisplayName("Must not confirm credit when using a card with the DECLINED status")
-    void shouldNotConfirmCreditWithInvaliddeclinedCard() throws SQLException {
-        getFilledCreditPage(declinedCard).creditCardForm.notificationErrorIsVisible();
+    void shouldNotConfirmCreditWithInvalidDeclinedCard() throws SQLException {
+        getFilledCreditPage(declinedCard).getCreditCardForm().notificationErrorIsVisible();
         assertEquals(SQLHelper.findCreditStatus(), STATUS_DECLINED);
         assertNull(SQLHelper.findCreditId());
     }
@@ -87,7 +107,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm the purchase with an invalid card number")
     void shouldNotSubmitPaymentWithIllegalCard() throws SQLException {
         approvedCard.setNumber("4444 4444 4444 4444");
-        getFilledPaymentPage(approvedCard).creditCardForm.assertNotificationErrorIsVisible();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertNotificationErrorIsVisible();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -95,7 +115,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm a loan with an invalid card number")
     void shouldNotSubmitCreditWithIllegalCard() throws SQLException {
         approvedCard.setNumber("4444 4444 4444 4444");
-        getFilledCreditPage(approvedCard).creditCardForm.notificationErrorIsVisible();
+        getFilledCreditPage(approvedCard).getCreditCardForm().notificationErrorIsVisible();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -103,7 +123,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongMonth.cvs", numLinesToSkip = 1)
     void shouldNotSubmitPaymentWithWrongMonth(String month, String message) throws SQLException {
         approvedCard.setMonth(month);
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
     }
 
@@ -111,7 +131,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm the purchase if a non-existent month is entered")
     void shouldNotConfirmPaymentWithInvalidMonth() throws SQLException {
         approvedCard.setMonth("22");
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidMonth();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidMonth();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -119,7 +139,7 @@ public class PurchaseTests {
     @DisplayName("Must not confirm purchase without specifying year")
     void shouldNotConfirmPaymentIfEmptyYear() throws SQLException {
         approvedCard.setYear("");
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -127,7 +147,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm the purchase if the year precedes the current")
     void shouldNotConfirmPaymentWithOldYear() throws SQLException {
         approvedCard.setYear(getWrongYear());
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidExpireDate();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidExpireDate();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -135,7 +155,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongMonth.cvs", numLinesToSkip = 1)
     void shouldNotSubmitCreditWithWrongMonth(String month, String message) throws SQLException {
         approvedCard.setMonth(month);
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
     }
 
@@ -143,7 +163,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm a loan if a non-existent month is entered")
     void shouldNotConfirmCreditWithInvalidMonth() throws SQLException {
         approvedCard.setMonth("22");
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidMonth();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidMonth();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -151,7 +171,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm the loan without indicating the year")
     void shouldNotConfirmCreditIfEmptyYear() throws SQLException {
         approvedCard.setYear("");
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -159,7 +179,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm a loan if the year precedes the current")
     void shouldNotConfirmCreditWithOldYear() throws SQLException {
         approvedCard.setYear(getWrongYear());
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidExpireDate();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidExpireDate();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -167,7 +187,7 @@ public class PurchaseTests {
     @DisplayName("Must not confirm purchase without owner name")
     void shouldNotConfirmPaymentWithoutOwner() throws SQLException {
         approvedCard.setOwner("");
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidFillData();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidFillData();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -175,7 +195,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongOwner.cvs", numLinesToSkip = 1)
     void shouldNotConfirmPaymentWithInvalidOwner(String owner, String message) throws SQLException {
         approvedCard.setOwner(owner);
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
     }
 
@@ -183,7 +203,7 @@ public class PurchaseTests {
     @DisplayName("Should not confirm a loan without the name of the owner")
     void shouldNotConfirmCreditWithoutOwner() throws SQLException {
         approvedCard.setOwner("");
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidFillData();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidFillData();
         assertFalse(SQLHelper.isNotEmpty());
     }
 
@@ -191,7 +211,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongOwner.cvs", numLinesToSkip = 1)
     void shouldNotConfirmCreditWithInvalidOwner(String owner, String message) throws SQLException {
         approvedCard.setOwner(owner);
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
     }
 
@@ -199,7 +219,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongCvc.cvs", numLinesToSkip = 1)
     void shouldNotConfirmPaymentWithInvalidCvc(String cvc, String message) throws SQLException {
         approvedCard.setCvc(cvc);
-        getFilledPaymentPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledPaymentPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
     }
 
@@ -207,24 +227,7 @@ public class PurchaseTests {
     @CsvFileSource(resources = "/wrongCvc.cvs", numLinesToSkip = 1)
     void shouldNotConfirmCreditWithInvalidCvc(String cvc, String message) throws SQLException {
         approvedCard.setCvc(cvc);
-        getFilledCreditPage(approvedCard).creditCardForm.assertInputInvalidFormat();
+        getFilledCreditPage(approvedCard).getCreditCardForm().assertInputInvalidFormat();
         assertFalse(SQLHelper.isNotEmpty(), message);
-    }
-
-    public void setDeclinedCard() {
-        declinedCard.setNumber("4444 4444 4444 4442");
-        declinedCard.setMonth("05");
-        declinedCard.setYear(getCorrectYear());
-        declinedCard.setOwner(setFakeOwner());
-        declinedCard.setCvc(getRandomCvc());
-    }
-
-    public void setApprovedCard() {
-        approvedCard.setNumber("4444 4444 4444 4441");
-        invalidNumberCard.setNumber("4444 4444 4444 4444");
-        approvedCard.setMonth("05");
-        approvedCard.setYear(getCorrectYear());
-        approvedCard.setOwner(setFakeOwner());
-        approvedCard.setCvc(getRandomCvc());
     }
 }

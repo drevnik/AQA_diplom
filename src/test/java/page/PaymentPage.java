@@ -2,12 +2,14 @@ package page;
 
 import data.Card;
 
-public class PaymentPage {
-    public CreditCardForm creditCardForm = new CreditCardForm();
+public class PaymentPage extends PageForm {
+    public static CreditPage getFilledPaymentPage(Card card) {
+        CreditPage creditPage = StartPage.getStartPage().creditPage();
+        creditPage.getCreditCardForm().fillData(card);
+        return creditPage;
+    }
 
-    public static PaymentPage getFilledPaymentPage(Card card) {
-        PaymentPage paymentPage = StartPage.getStartPage().paymentPage();
-        paymentPage.creditCardForm.fillData(card);
-        return paymentPage;
+    public PaymentPage() {
+        creditCardForm = new CreditCardForm();
     }
 }
